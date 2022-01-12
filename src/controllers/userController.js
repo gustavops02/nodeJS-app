@@ -46,7 +46,7 @@ const showAll = async (req, res) => {
 */
 
 const update = async (req, res) => {
-    
+
     const { email, password, username } = req.body
 
     try {
@@ -59,7 +59,7 @@ const update = async (req, res) => {
             {
                 new: true
             })
-        res.send( userUpdated)
+        res.send(userUpdated)
 
 
     } catch (error) {
@@ -68,6 +68,26 @@ const update = async (req, res) => {
     }
 }
 
+/* 
+    Log In
+*/
 
+const login = async (req, res) => {
 
-module.exports = { register, remove, showAll, update }
+    const { username, password } = req.body
+    try {
+        const user = await User.findOne({ username }).select('+password')
+
+        if (password != user.password)
+            return res.status(400).send({ error: 'Wrong password' })
+
+        if (password == user.password && username == user.username)
+            return res.status(200).send({ success: 'Authorization success' })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(400).send({ error: 'Authorization failed' })
+    }
+}
+
+module.exports = { register, remove, showAll, update, login }
